@@ -1,3 +1,4 @@
+import os
 import sys
 
 from PySide2.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QComboBox, QTextBrowser, QLineEdit, QPushButton, \
@@ -8,6 +9,9 @@ from CopyGeneration.AskToOpenAi import AskToOpenAi
 
 class AskWidget(QWidget):
     def __init__(self):
+        self.run_ask = None
+        self.key_words = None
+
         self.main_lay = None
         self.setting_lay = None
         self.condition_lay = None
@@ -29,6 +33,9 @@ class AskWidget(QWidget):
         self.words_limite()
 
     def construt(self):
+        self.run_ask = AskToOpenAi()
+        self.key_words = []
+
         self.main_lay = QVBoxLayout()
         self.setting_lay = QHBoxLayout()
         self.condition_lay = QVBoxLayout()
@@ -47,7 +54,6 @@ class AskWidget(QWidget):
         self.condition_lay.addWidget(self.request_key_words_lineEdit)
         self.condition_lay.addWidget(QLabel('内容类型'))
         self.condition_lay.addWidget(self.request_type_combo)
-        self.condition_lay.addWidget(QLabel('内容字数'))
 
         self.setting_lay.addLayout(self.condition_lay)
         self.setting_lay.addWidget(self.submit_btn)
@@ -66,7 +72,45 @@ class AskWidget(QWidget):
 
         self.OPENAI_API_KEY.setPlaceholderText("请输入OPENAI_API_KEY")
         self.request_items_num_lineEdit.setPlaceholderText("请输入需要获取多少条数据")
-        self.request_key_words_lineEdit.setPlaceholderText("请输入关键词")
+        self.request_key_words_lineEdit.setPlaceholderText("请输入关键词（文件）")
+
+    def slot_click_clear_btn(self):
+        self.clear_btn.clicked.connect(self.click_clear_btn)
+
+    def slot_click_submit_btn(self):
+        self.submit_btn.clicked.connect(self.click_submit_btn)
+
+    def click_clear_btn(self):
+        self.result_show_textBrowser.clear()
+
+    def click_submit_btn(self):
+        self.run_ask.OPENAI_API_KEY = self.OPENAI_API_KEY.text()
+        self.run_ask.request_items_num = self.request_items_num_lineEdit.text()
+        self.run_ask.request_type = self.request_type_combo.currentText()
+        self.run_ask.words_legth = self.words_legth
+
+        self.create_key_words_list_from_file()
+        if self.key_words != 0:
+            for key in self.key_words:
+                print(key)
+                self.run_ask.request_key_words = key
+                # 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
+                # C:\\Users\\11\\Desktop\\11.txt
+                self.run_ask_and_show_res()
+
+        else:
+            self.run_ask.request_key_words = self.request_key_words_lineEdit.text()
+            self.run_ask_and_show_res()
+
+    def create_key_words_list_from_file(self):
+        file_name = self.request_key_words_lineEdit.text()
+        file_type = os.path.isfile(file_name)
+
+        if file_type:
+            with open(file_name, 'r', encoding='utf-8') as f:
+                for key in f.readlines():
+                    self.key_words.append(key.strip('\n'))
+        return file_type
 
     def words_limite(self):
         words_legth_combo_list = ['less than 10', 'more than 10 words and less than 15']
@@ -75,26 +119,13 @@ class AskWidget(QWidget):
         else:
             self.words_legth = words_legth_combo_list[1]
 
-    def slot_click_clear_btn(self):
-        self.clear_btn.clicked.connect(self.click_clear_btn)
-
-    def click_clear_btn(self):
-        self.result_show_textBrowser.clear()
-
-    def slot_click_submit_btn(self):
-        self.submit_btn.clicked.connect(self.click_submit_btn)
-
-    def click_submit_btn(self):
+    def run_ask_and_show_res(self):
         try:
-            run_ask = AskToOpenAi()
-            run_ask.OPENAI_API_KEY = self.OPENAI_API_KEY.text()
-            run_ask.request_items_num = self.request_items_num_lineEdit.text()
-            run_ask.request_key_words = self.request_key_words_lineEdit.text()
-            run_ask.request_type = self.request_type_combo.currentText()
-            run_ask.words_legth = self.words_legth
-            res = run_ask.run()
+            res = self.run_ask.run()
+            print(res)
             self.result_show_textBrowser.append('Items: ' + str(len(res)))
             for text in res:
+                self.result_show_textBrowser.append(str(self.run_ask.request_key_words))
                 self.result_show_textBrowser.append(str(text))
             self.result_show_textBrowser.append('\n')
         except EOFError as e:
