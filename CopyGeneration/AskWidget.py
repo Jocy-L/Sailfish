@@ -94,7 +94,7 @@ class AskWidget(QWidget):
             for key in self.key_words:
                 print(key)
                 self.run_ask.request_key_words = key
-                # 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
+
                 # C:\\Users\\11\\Desktop\\11.txt
                 self.run_ask_and_show_res()
 
