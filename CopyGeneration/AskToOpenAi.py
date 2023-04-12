@@ -73,7 +73,7 @@ class AskToOpenAi():
 
 
 run_ask = AskToOpenAi()
-run_ask.OPENAI_API_KEY = "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"
+run_ask.OPENAI_API_KEY = ""
 run_ask.request_str = "瑞幸"
 run_ask.request_items_num = 1
 run_ask.run()
