@@ -1,5 +1,6 @@
 import os
 import sys
+import openpyxl, pandas
 
 from PySide2.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton, QApplication, QTableWidget, \
     QHeaderView, QTableWidgetItem
@@ -101,7 +102,20 @@ class AskWidget(QWidget):
         self.result_show_table.clearContents()
 
     def click_download_btn(self):
-        print('self.download_btn')
+        wb = openpyxl.Workbook()
+        columnHeaders = []
+        # create column header list
+        for j in range(self.result_show_table.columnCount()):
+            columnHeaders.append(self.result_show_table.horizontalHeaderItem(j).text())
+        df = pandas.DataFrame(columns=columnHeaders)
+        # print(df)
+
+        # create dataframe object recordset
+        for row in range(self.result_show_table.rowCount()):
+            for col in range(self.result_show_table.columnCount()):
+                item = self.result_show_table.item(row, col)
+                df.at[row, columnHeaders[col]] = item.text() if item is not None else ""
+        df.to_csv('result.csv', index=False)
 
     def click_submit_btn(self):
         self.run_ask.OPENAI_API_KEY = self.OPENAI_API_KEY.text()
@@ -153,3 +167,5 @@ widget = AskWidget()
 widget.resize(800, 600)
 widget.show()
 sys.exit(app.exec_())
+
+# C:\Users\11\Desktop\11.txt
