@@ -8,7 +8,7 @@ class AskToOpenAi():
         self.request_items_num = None
         self.request_type = None
         self.request_key_words = None
-        self.words_legth = None
+        self.words_length = None
         self.request_str_complete = None
         self.sensitive_word_file = 'SensitiveWord.txt'
         self.save_result_file = 'result.txt'
@@ -20,7 +20,7 @@ class AskToOpenAi():
             self.request_items_num,
             self.request_type,
             self.request_key_words,
-            self.words_legth,
+            self.words_length,
             self.request_key_words)
 
     def LinkToGptApi(self):
@@ -81,5 +81,5 @@ class AskToOpenAi():
 # run_ask.request_items_num = 'five'
 # run_ask.request_type = 'description'
 # run_ask.request_key_words = "'加盟， 咖啡'"
-# run_ask.words_legth = 'more than 15 words and less than 20 '
+# run_ask.length = 'more than 15 words and less than 20 '
 # run_ask.run()
