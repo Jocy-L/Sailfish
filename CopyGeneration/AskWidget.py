@@ -10,8 +10,8 @@ import openpyxl, pandas
 from PySide2.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton, QApplication, QTableWidget, \
     QHeaderView, QTableWidgetItem, QMessageBox
 
-from CopyGeneration.AskToOpenAi import AskToOpenAi
-from CopyGeneration.ReStructure import request_dict, table_titles, CustomLineEdit, result_filename, \
+from AskToOpenAi import AskToOpenAi
+from ReStructure import request_dict, table_titles, CustomLineEdit, result_filename, \
     LoggingInfo_filename
 
 
@@ -130,8 +130,9 @@ class AskWidget(QWidget):
                     df.at[row, columnHeaders[col]] = item.text() if item is not None else ""
             df.to_csv(output_cvs_name, index=False)
 
-        except Exception:
-            self.warning_box('download')
+        except Exception as e:
+            print(e)
+            # self.warning_box('download')
 
     def click_submit_btn(self):
         try:
@@ -147,8 +148,9 @@ class AskWidget(QWidget):
                 self.run_ask.request_key_words = self.request_key_words_lineEdit.text()
                 self.run_ask_and_show_res()
 
-        except Exception:
-            self.warning_box('submit')
+        except Exception as e:
+            print(e)
+            # self.warning_box('submit')
 
     # Widgets Logical function module
     def create_key_words_list_from_file(self):

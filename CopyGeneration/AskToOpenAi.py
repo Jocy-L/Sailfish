@@ -3,6 +3,9 @@
 
 #coding=utf-8
 import datetime
+import os.path
+import sys
+
 import openai
 
 class AskToOpenAi():
@@ -13,9 +16,8 @@ class AskToOpenAi():
         self.request_key_words = None
         self.words_length = None
         self.request_str_complete = None
-        self.sensitive_word_file = 'SensitiveWord.txt'
+        self.sensitive_word_file = "E:\PythonProjects\CopyGeneration\SensitiveWord.txt"
         self.save_result_file = 'result_txt.txt'
-        
         super(AskToOpenAi, self).__init__()
 
     def request_str_combo(self):
