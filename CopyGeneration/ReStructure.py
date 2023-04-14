@@ -1,10 +1,14 @@
+# File content: Including Custom modules about in/output and generic methods and class refactoring modules
+# Usage: import modules
+
+#coding=utf-8
 import datetime
 import os
 
 import socket
 from PySide2.QtWidgets import QLineEdit
 
-# custom information reset in this part and no more other parts support to user except developer
+# Custom modules: custom information reset in this part and no more other parts support to user except developer
 table_titles = ['关键词', '标题', '描述1', '描述2']
 
 request_dict = {
@@ -14,13 +18,13 @@ request_dict = {
 }
 
 output_result_csv_dir = "C:\\Users\\{}\\AppData\\Local\\Temp\\CopyGeneration"
-output_error_txt_dir = "C:\\Users\\{}\\AppData\\Local\\Temp\\CopyGeneration\\error"
+output_logging_txt_dir = "C:\\Users\\{}\\AppData\\Local\\Temp\\CopyGeneration\\logging"
 
 # ----------------------------------------------------------------------------------------------------------------------
 # Customization part finished and next part is sys need function
 
 
-
+# About generic methods and class refactoring modules
 def current_user():
     HostName, LoginName = socket.gethostname(), os.getlogin()
     return HostName, LoginName
@@ -31,10 +35,10 @@ def result_filename():
     download_file = Download_dir_confirm(output_result_csv_dir, output_file_name)
     return download_file
 
-def ErrorInfo_filename():
-    # C:\Users\11\AppData\Local\Temp\CopyGeneration\error
-    output_file_name = 'error_{}.txt'.format(datetime.datetime.now().strftime("%Y-%m-%d-%H_%M_%S"))
-    download_file = Download_dir_confirm(output_error_txt_dir, output_file_name)
+def LoggingInfo_filename():
+    # C:\Users\11\AppData\Local\Temp\CopyGeneration\logging
+    output_file_name = 'logging_{}.txt'.format(datetime.datetime.now().strftime("%Y-%m-%d"))
+    download_file = Download_dir_confirm(output_logging_txt_dir, output_file_name)
     return download_file
 
 # combo dir and filename, if dir not exist will be created

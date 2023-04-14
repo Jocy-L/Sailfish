@@ -1,3 +1,6 @@
+# File content: support a standard class to link GPT-API3
+# Usage: at the buttom of this file
+
 #coding=utf-8
 import datetime
 import openai
@@ -66,11 +69,11 @@ class AskToOpenAi():
 
     def run(self):
         self.request_str_combo()
-        print(self.request_str_complete)
+        # print(self.request_str_complete)
         res = self.LinkToGptApi()
         text_need_check = self.text_processing(res=res)
         text_after_check = self.sensitive_word_check(text_need_check=text_need_check)
-        self.write_to_txt(text_after_check=text_after_check)
+        # self.write_to_txt(text_after_check=text_after_check)
 
         return text_after_check
 
