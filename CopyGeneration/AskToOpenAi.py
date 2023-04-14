@@ -11,7 +11,7 @@ class AskToOpenAi():
         self.words_length = None
         self.request_str_complete = None
         self.sensitive_word_file = 'SensitiveWord.txt'
-        self.save_result_file = 'result.txt'
+        self.save_result_file = 'result_txt.txt'
         
         super(AskToOpenAi, self).__init__()
 
@@ -58,7 +58,7 @@ class AskToOpenAi():
                     text_after_check.append(text)
         return text_after_check
 
-    def write_to_csv(self, text_after_check):
+    def write_to_txt(self, text_after_check):
         with open(self.save_result_file, 'a', encoding='utf-8') as f:
             f.write(str(datetime.datetime.now()) + '   items:' + str(len(text_after_check)) + '\n')
             for text in text_after_check:
@@ -70,7 +70,7 @@ class AskToOpenAi():
         res = self.LinkToGptApi()
         text_need_check = self.text_processing(res=res)
         text_after_check = self.sensitive_word_check(text_need_check=text_need_check)
-        self.write_to_csv(text_after_check=text_after_check)
+        self.write_to_txt(text_after_check=text_after_check)
 
         return text_after_check
 

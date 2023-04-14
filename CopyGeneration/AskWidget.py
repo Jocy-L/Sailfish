@@ -6,7 +6,7 @@ from PySide2.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLineEdit, QPus
     QHeaderView, QTableWidgetItem
 
 from CopyGeneration.AskToOpenAi import AskToOpenAi
-from CopyGeneration.ReStructure import request_dict, table_titles, CustomLineEdit
+from CopyGeneration.ReStructure import request_dict, table_titles, CustomLineEdit, result_filename, ErrorInfo_filename
 
 
 class AskWidget(QWidget):
@@ -49,6 +49,7 @@ class AskWidget(QWidget):
 
         self.request_items_num_lineEdit = QLineEdit()
         self.request_key_words_lineEdit = CustomLineEdit()
+        # self.request_key_words_lineEdit = QLineEdit()
         self.submit_btn = QPushButton('提交')
         self.clear_btn = QPushButton('清屏')
         self.download_btn = QPushButton('下载')
@@ -104,6 +105,7 @@ class AskWidget(QWidget):
     def click_download_btn(self):
         wb = openpyxl.Workbook()
         columnHeaders = []
+        output_cvs_name = result_filename()
         # create column header list
         for j in range(self.result_show_table.columnCount()):
             columnHeaders.append(self.result_show_table.horizontalHeaderItem(j).text())
@@ -115,7 +117,7 @@ class AskWidget(QWidget):
             for col in range(self.result_show_table.columnCount()):
                 item = self.result_show_table.item(row, col)
                 df.at[row, columnHeaders[col]] = item.text() if item is not None else ""
-        df.to_csv('result.csv', index=False)
+        df.to_csv(output_cvs_name, index=False)
 
     def click_submit_btn(self):
         self.run_ask.OPENAI_API_KEY = self.OPENAI_API_KEY.text()
@@ -162,10 +164,13 @@ class AskWidget(QWidget):
         for n, i in enumerate(result):
             self.result_show_table.setItem(row, n+1, QTableWidgetItem(result[i][0]))
 
+# try:
 app = QApplication()
 widget = AskWidget()
 widget.resize(800, 600)
 widget.show()
 sys.exit(app.exec_())
+# except Exception as e:
+#     ErrorInfo_filename()
 
 # C:\Users\11\Desktop\11.txt
