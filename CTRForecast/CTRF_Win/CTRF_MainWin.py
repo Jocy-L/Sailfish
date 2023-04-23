@@ -6,10 +6,10 @@ import sys
 
 from PySide2.QtWidgets import QApplication, QLabel, QPushButton
 
-from CTRP_Customize import window_size
-from CTRP_Win.CTRP_ExecuteWin import ExecuteWin
-from CTRP_general.ClassRedefine import BasicWidget
-from CTRP_general.Structure import Global
+from CTRF_Customize import window_size
+from CTRF_Win.CTRF_ExecuteWin import ExecuteWin
+from CTRF_General.ClassRedefine import BasicWidget
+from CTRF_General.Structure import Global
 
 
 class CTRP_MainWin(BasicWidget):
@@ -20,6 +20,7 @@ class CTRP_MainWin(BasicWidget):
 
         super(CTRP_MainWin, self).__init__()
         self.slot_click_auto_btn()
+        self.slot_click_assigned_btn()
 
     def construct(self):
         self.tips_label = QLabel()
@@ -37,16 +38,28 @@ class CTRP_MainWin(BasicWidget):
         self.auto_btn.setMaximumSize(250, 250)
         self.assigned_btn.setMaximumSize(250, 250)
 
+    # slot
     def slot_click_auto_btn(self):
         self.auto_btn.clicked.connect(self.click_auto_btn)
 
+    def slot_click_assigned_btn(self):
+        self.assigned_btn.clicked.connect(self.click_assigned_btn)
+
+    # click events
     def click_auto_btn(self):
+        Global.current_mode = self.auto_btn.text()
+        self.show_ExecuteWin()
+
+    def click_assigned_btn(self):
+        Global.current_mode = self.assigned_btn.text()
+        self.show_ExecuteWin()
+
+    # Secondary implementation events
+    def show_ExecuteWin(self):
         self.auto_widget = ExecuteWin()
         self.auto_widget.resize(window_size['weight'], window_size['height'])
         self.auto_widget.show()
         # self.hide()
-
-        Global.current_mode = self.auto_btn.text()
 
 
 app = QApplication()

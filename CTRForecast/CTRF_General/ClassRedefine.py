@@ -21,9 +21,9 @@ class BasicWidget(QWidget):
         self.display_group.setLayout(self.display_lay)
         self.interactive_group.setTitle('Interactive')
         self.interactive_group.setLayout(self.interactive_lay)
-        self.left_group.setTitle('Left')
+        # self.left_group.setTitle('Left')
         self.left_group.setLayout(self.left_lay)
-        self.right_group.setTitle('Right')
+        # self.right_group.setTitle('Right')
         self.right_group.setLayout(self.right_lay)
 
         self.interactive_lay.addWidget(self.left_group)
