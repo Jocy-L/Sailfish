@@ -56,7 +56,7 @@ class ExecuteWin(BasicWidget):
             self.request_receive_line.clear()
             self.request_receive_line.setPlaceholderText(CTRF_Customize.auto_input_tips)
         elif Global.current_mode == 'Specific_mode':
-            self.set_res_table_title(CTRF_Customize.specific_res_table_titles)
+            self.set_res_table_title(CTRF_Customize.specific_res_table_idea_titles)
             self.request_receive_line.clear()
             self.request_receive_line.setPlaceholderText(CTRF_Customize.specific_input_tips)
         else:
