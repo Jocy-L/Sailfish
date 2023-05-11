@@ -41,7 +41,8 @@ def create_update_datafile_save_file(columns_mes):
     for key in columns_mes.keys():
         path_dir = create_update_datafile_save_dir()
         with open(os.path.join(path_dir, '{}.txt'.format(key)), 'a+') as f:
-            f.write(str(columns_mes[key]))
-    return True
+            for i in columns_mes[key]:
+                f.write(str(i) + '\n')
+    return path_dir
 
 

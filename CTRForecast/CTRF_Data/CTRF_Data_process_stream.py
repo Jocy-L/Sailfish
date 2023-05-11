@@ -2,61 +2,103 @@
 # Usage:
 
 #coding=utf-8
-import datetime
-import json
 import os
 
-import jieba
-
 from CTRF_Data.CTRF_Csv import csv_read_current_column, create_update_datafile_save_file
+from CTRF_Data.CTRF_DB import write_data_word_table, create_new_word_value_tables, read_word_value_from_DB
+from CTRF_Data.DataPreprocess import word_segmentation, words_to_float, compute_item_value
 
 
 def batch_get_text_column_csv(initial_csv_dir, columns):
     for file_name in os.listdir(initial_csv_dir):
-        full_file_path = os.path.join(initial_csv_dir, file_name)
-        columns_mes = csv_read_current_column(full_file_path, columns)
-        create_update_datafile_save_file(columns_mes)
+        file_full_path = os.path.join(initial_csv_dir, file_name)
+        columns_mes = csv_read_current_column(file_full_path, columns)
+        # print(columns_mes['desc1'])
+        # print(type(columns_mes['desc1']))
+        path_dir = create_update_datafile_save_file(columns_mes)
 
-# # get three text columns csv
-# columns = ['创意标题', '创意描述1', '创意描述2']
-# initial_csv_dir = 'E:\Project\CTRF\Data\Initial\\2023-05-07'
-# batch_get_text_column_csv(initial_csv_dir, columns)
+    return columns_mes, path_dir
 
-def word_segmentation(filepath):
-    file_dir, file_name = os.path.split(filepath)
-    file_name_base, extension = os.path.splitext(file_name)
-    work_package = file_name_base
-    save_dir = 'E:\Project\CTRF\Data\WordSegmentation'
-    save_file_full = os.path.join(save_dir, '{}\{}.txt'.format(datetime.date.today(), work_package))
-    with open(filepath, 'r') as f:
-        str = f.read()
-    # Search mode
-    words = jieba.lcut_for_search(str)
-    # All mode
-    # words = jieba.lcut(str, cut_all=True)
-    # Precision mode
-    # words = jieba.lcut(str, cut_all=True)
-    counts = {}
-    words_dict = {}
-    for word in words:
-        if len(word) == 1:
-            continue
-        else:
-            counts[word] = counts.get(word, 0) + 1
+def words_float_to_DB(filepath, table_name):
+    words_dict = word_segmentation(filepath)
+    words_float_dict = words_to_float(words_dict)
+    for key, value in words_float_dict.items():
+        write_data_word_table(table_name=table_name, word=key, value=value)
 
-    items = list(counts.items())
-    items.sort(key=lambda x:x[1], reverse=True)
-    for i in range(len(items)):
-        word, counts = items[i]
-        words_dict[word] = counts
-
-    print(words_dict)
-    with open(save_file_full, 'w', encoding='utf-8') as fw:
-    # with open('depart_word_all.txt', 'a+', encoding='utf-8') as fw:
-    #     fw.write('{} {}\n'.format(word, counts))
-        fw.write(str(words_dict))
+def select_word_value_table_name(file_name_base):
+    if 'desc' in file_name_base:
+        table_name = 'ctrf_desc_words'
+    elif 'title' in file_name_base:
+        table_name = 'ctrf_title_words'
+    else:
+        table_name = 'No match table'
+    return table_name
 
 
-# E:\Project\CTRF\Data\WordSegmentation
-filepath = 'E:/Project/CTRF/Data/Columns/2023-05-08/desc1.txt'
-word_segmentation(filepath)
+def SteamRun():
+    # # 一、将Initial的原始文件找到有用列，提取到相应的Columns列文件txt
+    # # get three text columns csv
+    # columns = ['创意标题', '创意描述1', '创意描述2', '点击率', '平均点击价格', '展现']
+    # initial_csv_dir = 'E:\Project\CTRF\Data\Initial\\2023-05-07'
+    # columns_mes, path_dir = batch_get_text_column_csv(initial_csv_dir, columns)
+
+    # # 二、列文件txt计算词值，str-->float，并写入DB对应word_value table
+    # create_new_word_value_tables()
+    # # Columns_txt_dir = 'E:/Project/CTRF/Data/Columns/2023-05-11'
+    # Columns_txt_dir = path_dir
+    # table_name = ''
+    # for file_name in os.listdir(Columns_txt_dir):
+    #     file_name_base, extension = os.path.splitext(file_name)
+    #     table_name = select_word_value_table_name(file_name_base)
+    #     if table_name == 'No match table':
+    #         continue
+    #     else:
+    #         file_full_path = os.path.join(Columns_txt_dir, file_name)
+    #         words_float_to_DB(filepath=file_full_path, table_name=table_name)
+
+    # 三、计算字段值
+    # 1、一表有多个相同词就按相加计算：word_value = word_value1 + word_value2 + ...
+    need_transform_item = ['title', 'desc1', 'desc2']
+    title_list = []
+    desc1_list = []
+    desc2_list = []
+    items_float_list = []
+    for item in need_transform_item:
+        item_txt_path = 'E:\\Project\\CTRF\\Data\\Columns\\2023-05-11\\{}.txt'.format(item)
+        # item_txt_path = os.path.join(Columns_txt_dir, '{}.txt'.format(item))
+        table_name = select_word_value_table_name(item)
+        word_value_dict = read_word_value_from_DB(table_name)
+        mes_items_value_list = compute_item_value(item_txt_path, word_value_dict)
+        # print(mes_items_value_list)
+        # print(item)
+        # print(len((mes_items_value_list)))
+        if item == 'title':
+            title_list = mes_items_value_list
+        elif item == 'desc1':
+            desc1_list = mes_items_value_list
+        elif item == 'desc2':
+            desc2_list = mes_items_value_list
+
+    for title, desc1, desc2 in zip(title_list, desc1_list, desc2_list):
+        items_float = title*0.25 + desc1*0.15 + desc2*0.10
+        items_float_list.append(items_float)
+
+    print(len(items_float_list))
+    # save_path = os.path.join(Columns_txt_dir, 'items_float.txt')
+    save_path = os.path.join('E:\\Project\\CTRF\\Data\\Columns\\2023-05-11', 'items_float.txt')
+    with open(save_path, 'w') as f:
+        for i in items_float_list:
+            f.write(str(i) + '\n')
+    print(len(items_float_list))
+
+
+    # 2、字段拼接
+    # 3、匹配表值计算总字段值
+    # 3.1、计算单元格值*3
+    # 3.2、计算总值
+
+    # # final step
+    # final_step = close_DB_sever()
+    pass
+
+# SteamRun()

@@ -7,6 +7,7 @@ import sys
 from PySide2.QtWidgets import QApplication, QLabel, QPushButton
 
 from CTRF_Customize import window_size
+from CTRF_Data.CTRF_DB import close_DB_sever
 from CTRF_Win.CTRF_ExecuteWin import ExecuteWin
 from CTRF_General.ClassRedefine import BasicWidget
 from CTRF_General.Structure import Global
@@ -21,6 +22,7 @@ class CTRP_MainWin(BasicWidget):
         super(CTRP_MainWin, self).__init__()
         self.slot_click_auto_btn()
         self.slot_click_assigned_btn()
+        self.close_DB_link()
 
     def construct(self):
         self.tips_label = QLabel()
@@ -60,6 +62,10 @@ class CTRP_MainWin(BasicWidget):
         self.auto_widget.resize(window_size['weight'], window_size['height'])
         self.auto_widget.show()
         # self.hide()
+
+    def close_DB_link(self):
+        if self.close():
+            close_DB_sever()
 
 
 app = QApplication()
