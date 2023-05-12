@@ -29,8 +29,7 @@ def csv_read_current_column(file, columns):
     # print(columns_mes)
     return columns_mes
 
-def create_update_datafile_save_dir():
-    path_dir = 'E:\\Project\\CTRF\\Data\\Columns\\{}'.format(datetime.date.today())
+def create_update_datafile_save_dir(path_dir):
     if os.path.isdir(path_dir):
         pass
     else:
@@ -38,11 +37,20 @@ def create_update_datafile_save_dir():
     return path_dir
 
 def create_update_datafile_save_file(columns_mes):
+    text_columns = ['title', 'desc1', 'desc2']
+    path_dir = 'E:\\Project\\CTRF\\Data\\Columns\\{}'.format(datetime.date.today())
     for key in columns_mes.keys():
-        path_dir = create_update_datafile_save_dir()
-        with open(os.path.join(path_dir, '{}.txt'.format(key)), 'a+') as f:
-            for i in columns_mes[key]:
-                f.write(str(i) + '\n')
+        if key in text_columns:
+            text_columns_dir = os.path.join(path_dir, 'text_column')
+            create_update_datafile_save_dir(text_columns_dir)
+            with open(os.path.join(text_columns_dir, '{}.txt'.format(key)), 'a+') as f:
+                for i in columns_mes[key]:
+                    f.write(str(i) + '\n')
+        else:
+            create_update_datafile_save_dir(text_columns_dir)
+            with open(os.path.join(path_dir, '{}.txt'.format(key)), 'a+') as f:
+                for i in columns_mes[key]:
+                    f.write(str(i) + '\n')
     return path_dir
 
 
