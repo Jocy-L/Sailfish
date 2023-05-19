@@ -46,6 +46,13 @@ def create_update_datafile_save_file(columns_mes):
             with open(os.path.join(text_columns_dir, '{}.txt'.format(key)), 'a+') as f:
                 for i in columns_mes[key]:
                     f.write(str(i) + '\n')
+        elif 'CTR' in key:
+            create_update_datafile_save_dir(text_columns_dir)
+            with open(os.path.join(path_dir, '{}.txt'.format(key)), 'a+') as f:
+                for i in columns_mes[key]:
+                    str_i = i.strip('%')
+                    float_i = float(str_i) / 100
+                    f.write(str(float_i) + '\n')
         else:
             create_update_datafile_save_dir(text_columns_dir)
             with open(os.path.join(path_dir, '{}.txt'.format(key)), 'a+') as f:
