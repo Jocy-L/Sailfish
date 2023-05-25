@@ -1,5 +1,5 @@
-# File content:
-# Usage:
+# File content: About the whole process of CTR forecasting
+# Usage: run this file
 
 #coding=utf-8
 import csv
